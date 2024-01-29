@@ -26,6 +26,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     if (userInput.isNotEmpty) {
       setState(() {
         answer = calculate(currentOperation, answer, double.parse(userInput));
+        userInput = '';
         currentOperation = operation;
       });
     }
@@ -46,12 +47,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
     switch (operation) {
       case '+':
         return value1 + value2;
-      case '=':
+      case '-':
         return value1 - value2;
       case 'x':
         return value1 * value2;
       case '÷':
-        return value1 / value2;
+        if(value2 != 0) {
+          return value1 / value2;
+        }else{
+          return double.nan;
+        }
       default:
         return value2;
     }
