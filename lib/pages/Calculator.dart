@@ -12,11 +12,71 @@ class CalculatorPage extends StatefulWidget {
 class _CalculatorPageState extends State<CalculatorPage> {
   // storing user-input and answer
   var userInput = '';
-  var answer = '';
+  var answer = 0.0;
+  var currentOperation = '';
   final double pi = 3.1415926535897932;
 
-  buttonPressed(String buttonText) {
+  numberPressed(String buttonText) {
+    setState(() {
+      userInput += buttonText;
+    });
+  }
 
+  operationPressed(String operation) {
+    if (userInput.isNotEmpty) {
+      setState(() {
+        answer = calculate(currentOperation, answer, double.parse(userInput));
+        userInput = '';
+        currentOperation = operation;
+      });
+    }
+  }
+
+  equalPressed() {
+    if (userInput.isNotEmpty) {
+      setState(() {
+        answer = calculate(currentOperation, answer, double.parse(userInput));
+        userInput = answer.toString();
+        answer = 0.0;
+        currentOperation = '';
+      });
+    }
+  }
+
+  calculate(String operation, double value1, double value2) {
+    switch (operation) {
+      case '+':
+        return value1 + value2;
+      case '-':
+        return value1 - value2;
+      case 'x':
+        return value1 * value2;
+      case '÷':
+        if(value2 != 0) {
+          return value1 / value2;
+        }else{
+          return double.nan;
+        }
+      default:
+        return value2;
+    }
+  }
+
+  buttonPressed(String buttonText) {
+    setState(() {
+      if (buttonText == 'AC') {
+        userInput = '';
+        answer = 0.0;
+      } else if (buttonText == '⌫') {
+        userInput = userInput.substring(0, userInput.length - 1);
+      } else if (buttonText == '()' && !userInput.contains('(')) {
+        userInput += '(';
+      } else if (buttonText == '()' && userInput.contains('(')) {
+        userInput += ')';
+      } else if (buttonText == 'π') {
+        userInput += pi.toString();
+      }
+    });
   }
 
   @override
@@ -45,11 +105,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     children: [
                       Text(userInput,
                           textAlign: TextAlign.right,
-                          style: const TextStyle(
-                            fontSize: 70.0,
+                          style: TextStyle(
+                            fontSize: userInput.length > 13 ? 35.0 : 70.0,
                             color: Colors.black,
                           )),
-                      Text(answer.toString(),
+                      Text( answer == 0.0 ? '' : answer.toString(),
                           textAlign: TextAlign.right,
                           style: const TextStyle(
                             fontSize: 70.0,
@@ -79,8 +139,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               () => buttonPressed('()')),
                           calcButton(
                               'π', btnOperatorColor, () => buttonPressed('π')),
-                          calcButton(
-                              '÷', btnOperatorColor, () => buttonPressed('÷')),
+                          calcButton('÷', btnOperatorColor,
+                              () => operationPressed('÷')),
                         ],
                       ),
                       const SizedBox(
@@ -90,13 +150,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           calcButton(
-                              '7', btnNumberColor, () => buttonPressed('7')),
+                              '7', btnNumberColor, () => numberPressed('7')),
                           calcButton(
-                              '8', btnNumberColor, () => buttonPressed('8')),
+                              '8', btnNumberColor, () => numberPressed('8')),
                           calcButton(
-                              '9', btnNumberColor, () => buttonPressed('9')),
-                          calcButton(
-                              'x', btnOperatorColor, () => buttonPressed('x')),
+                              '9', btnNumberColor, () => numberPressed('9')),
+                          calcButton('x', btnOperatorColor,
+                              () => operationPressed('x')),
                         ],
                       ),
                       const SizedBox(
@@ -106,13 +166,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           calcButton(
-                              '4', btnNumberColor, () => buttonPressed('4')),
+                              '4', btnNumberColor, () => numberPressed('4')),
                           calcButton(
-                              '5', btnNumberColor, () => buttonPressed('5')),
+                              '5', btnNumberColor, () => numberPressed('5')),
                           calcButton(
-                              '6', btnNumberColor, () => buttonPressed('6')),
-                          calcButton(
-                              '-', btnOperatorColor, () => buttonPressed('-')),
+                              '6', btnNumberColor, () => numberPressed('6')),
+                          calcButton('-', btnOperatorColor,
+                              () => operationPressed('-')),
                         ],
                       ),
                       const SizedBox(
@@ -122,13 +182,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           calcButton(
-                              '1', btnNumberColor, () => buttonPressed('1')),
+                              '1', btnNumberColor, () => numberPressed('1')),
                           calcButton(
-                              '2', btnNumberColor, () => buttonPressed('2')),
+                              '2', btnNumberColor, () => numberPressed('2')),
                           calcButton(
-                              '3', btnNumberColor, () => buttonPressed('3')),
-                          calcButton(
-                              '+', btnOperatorColor, () => buttonPressed('+')),
+                              '3', btnNumberColor, () => numberPressed('3')),
+                          calcButton('+', btnOperatorColor,
+                              () => operationPressed('+')),
                         ],
                       ),
                       const SizedBox(
@@ -138,13 +198,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           calcButton(
-                              '0', btnNumberColor, () => buttonPressed('0')),
+                              '0', btnNumberColor, () => numberPressed('0')),
                           calcButton(
                               '.', btnNumberColor, () => buttonPressed('.')),
                           calcButton(
                               '⌫', btnNumberColor, () => buttonPressed('⌫')),
                           calcButton(
-                              '=', btnEqualColor, () => buttonPressed('=')),
+                              '=', btnEqualColor, () => equalPressed()),
                         ],
                       ),
                     ],
