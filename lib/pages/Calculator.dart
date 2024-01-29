@@ -16,7 +16,27 @@ class _CalculatorPageState extends State<CalculatorPage> {
   final double pi = 3.1415926535897932;
 
   buttonPressed(String buttonText) {
-
+    setState(() {
+      if (buttonText == 'AC') {
+        userInput = '';
+        answer = '';
+      } else if (buttonText == '⌫') {
+        userInput = userInput.substring(0, userInput.length - 1);
+      } else if (buttonText == '()' && !userInput.contains('(')) {
+        userInput += '(';
+      } else if (buttonText == '()' && userInput.contains('(')) {
+        userInput += ')';
+      } else if (buttonText == 'π') {
+        userInput += pi.toString();
+      } else if (buttonText == '+') {
+        userInput += "+";
+      } else if ( userInput.contains('+')) {
+        userInput += buttonText;
+      }
+      else{
+        userInput += buttonText;
+      }
+    });
   }
 
   @override
